@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Pages from "./pages/pages.jsx";
 import ReviewQueue from "./pages/ReviewQueue.jsx";
 import Composer from "./pages/Composer.jsx";
-import Posts from "./pages/Posts.jsx";
+import Posts from "./pages/posts.jsx";
 
 import Agent from "./pages/Agent.jsx";
 
