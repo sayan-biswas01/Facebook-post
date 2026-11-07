@@ -1,6 +1,6 @@
 import { db } from "../config/db.js";
 
-export const post = {
+export const Post = {
   list: () =>
     db
       .prepare(

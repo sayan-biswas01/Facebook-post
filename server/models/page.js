@@ -2,7 +2,7 @@ import { db } from "../config/db.js";
 
 const PUBLIC = "id, name, fb_page_id, niche, active, daily_limit, created_at";
 
-export const page = {
+export const Page = {
   all: () => db.prepare(`SELECT ${PUBLIC} FROM pages ORDER BY id DESC`).all(),
   publicById: (id) =>
     db.prepare(`SELECT ${PUBLIC} FROM pages WHERE id = ?`).get(id),

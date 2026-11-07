@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { z } from "zod";
-import { page } from "../models/page.js";
+
+import { Page } from "../models/Page.js";
 import { encrypt } from "../services/tokenVault.js";
 import { audit } from "../utils/audit.js";
 
 const router = Router();
 
-router.get("/", (req, res) => res.json(page.all()));
+router.get("/", (req, res) => res.json(Page.all()));
 
 router.post("/", (req, res) => {
   const b = z
@@ -18,19 +19,19 @@ router.post("/", (req, res) => {
       dailyLimit: z.coerce.number().int().min(1).max(10).default(3),
     })
     .parse(req.body);
-  const id = page.create({ ...b, encryptedToken: encrypt(b.token) });
+  const id = Page.create({ ...b, encryptedToken: encrypt(b.token) });
   audit("page_add", { id, name: b.name });
-  res.status(201).json(page.publicById(id));
+  res.status(201).json(Page.publicById(id));
 });
 
 router.patch("/:id/active", (req, res) => {
   const { active } = z.object({ active: z.boolean() }).parse(req.body);
-  page.setActive(Number(req.params.id), active);
-  res.json(page.publicById(Number(req.params.id)));
+  Page.setActive(Number(req.params.id), active);
+  res.json(Page.publicById(Number(req.params.id)));
 });
 
 router.delete("/:id", (req, res) => {
-  page.remove(Number(req.params.id));
+  Page.remove(Number(req.params.id));
   audit("page_remove", { id: req.params.id });
   res.json({ ok: true });
 });

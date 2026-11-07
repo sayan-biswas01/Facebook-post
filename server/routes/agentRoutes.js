@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { Page } from "../models/page.js";
+import { Page } from "../models/Page.js";
 import { NICHES } from "../agent/niches.js";
 import { runAgent } from "../agent/run.js";
 import { validTz } from "../agent/timeutil.js";
