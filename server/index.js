@@ -7,6 +7,7 @@ if (missingEnv.length) {
   console.error(`.env এ এই মানগুলো নেই: ${missingEnv.join(", ")}`);
   process.exit(1);
 }
+0.3;
 
 await import("./config/db.js");
 const { requireAuth } = await import("./middleware/auth.js");
