@@ -1,4 +1,6 @@
-node_modules,
-.env, 
+node_modules/
+.env
+dist/
+dist-ssr
 server/data/*.db*,
  server/media/*
