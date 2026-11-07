@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import { Post } from "../models/Post.js";
-import { Page } from "../models/Page.js";
+import { Page } from "../models/page.js";
 import { Asset } from "../models/Asset.js";
 import { Setting } from "../models/Setting.js";
 import { decrypt } from "../services/tokenVault.js";

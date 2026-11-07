@@ -2,7 +2,7 @@ import { NICHES, DEFAULTS } from "./niches.js";
 import { rank, shuffleTop } from "./curator.js";
 import { write } from "./formats.js";
 import { zonedToUtc, localDate, addDays } from "./timeutil.js";
-import { Page } from "../models/Page.js";
+import { Page } from "../models/page.js";
 import { Post } from "../models/Post.js";
 import { Setting } from "../models/Setting.js";
 import { SOURCES } from "../sources/index.js";
