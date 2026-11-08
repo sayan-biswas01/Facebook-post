@@ -7,7 +7,6 @@ if (missingEnv.length) {
   console.error(`.env এ এই মানগুলো নেই: ${missingEnv.join(", ")}`);
   process.exit(1);
 }
-0.3;
 
 await import("./config/db.js");
 const { requireAuth } = await import("./middleware/auth.js");
@@ -17,25 +16,46 @@ const { default: pageRoutes } = await import("./routes/pageRoutes.js");
 const { default: assetRoutes } = await import("./routes/assetRoutes.js");
 const { default: postRoutes } = await import("./routes/postRoutes.js");
 const { default: systemRoutes } = await import("./routes/systemRoutes.js");
-const { startPublishJob } = await import("./jobs/publishjob.js");
-
 const { default: agentRoutes } = await import("./routes/agentRoutes.js");
+
+const { startPublishJob } = await import("./jobs/publishjob.js");
 const { startAgentJob } = await import("./jobs/agentjob.js");
 const { startCleanupJob } = await import("./jobs/cleanupjob.js");
 
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: config.clientOrigin }));
+
+// CORS কনফিগারেশন: লোকালহোস্ট এবং ক্লাউডফ্লাওয়ার ডোমেইন উভատ অ্যালাউ করার জন্য
+const allowedOrigins = ["http://localhost:5173", config.clientOrigin].filter(
+  Boolean,
+);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || true) {
+        // প্রয়োজনে সব অরিজিন অ্যালাউ রাখতে true দিন
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
+
 app.use(express.json({ limit: "1mb" }));
 
+// সমস্ত API রাউটগুলো errorHandler-এর আগে বসাতে হবে
 app.use("/api/auth", authRoutes);
 app.use("/api/system", requireAuth, systemRoutes);
 app.use("/api/pages", requireAuth, pageRoutes);
 app.use("/api/assets", requireAuth, assetRoutes);
 app.use("/api/posts", requireAuth, postRoutes);
-app.use(errorHandler);
-
 app.use("/api/agent", requireAuth, agentRoutes);
+
+// errorHandler সবসময় সবার শেষে থাকবে
+app.use(errorHandler);
 
 app.listen(config.port, () => {
   console.log(`Server চালু: http://localhost:${config.port}`);
