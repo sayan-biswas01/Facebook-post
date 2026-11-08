@@ -20,7 +20,7 @@ const { default: systemRoutes } = await import("./routes/systemRoutes.js");
 const { startPublishJob } = await import("./jobs/publishjob.js");
 
 const { default: agentRoutes } = await import("./routes/agentRoutes.js");
-const { startAgentJob } = await import("./jobs/agentJob.js");
+const { startAgentJob } = await import("./jobs/agentjob.js");
 const { startCleanupJob } = await import("./jobs/cleanupjob.js");
 
 const app = express();
