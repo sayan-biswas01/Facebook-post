@@ -21,9 +21,11 @@ const { default: agentRoutes } = await import("./routes/agentRoutes.js");
 const { startPublishJob } = await import("./jobs/publishjob.js");
 const { startAgentJob } = await import("./jobs/agentjob.js");
 const { startCleanupJob } = await import("./jobs/cleanupjob.js");
+const { startKeepAlive } = await import("./jobs/keepAlive.js");
 
 const app = express();
 app.use(helmet());
+app.set("trust proxy", 1);
 
 // CORS কনফিগারেশন: লোকালহোস্ট এবং ক্লাউডফ্লাওয়ার ডোমেইন উভատ অ্যালাউ করার জন্য
 const allowedOrigins = ["http://localhost:5173", config.clientOrigin].filter(
@@ -54,6 +56,8 @@ app.use("/api/assets", requireAuth, assetRoutes);
 app.use("/api/posts", requireAuth, postRoutes);
 app.use("/api/agent", requireAuth, agentRoutes);
 
+app.get("/health", (req, res) => res.json({ ok: true }));
+
 // errorHandler সবসময় সবার শেষে থাকবে
 app.use(errorHandler);
 
@@ -62,4 +66,5 @@ app.listen(config.port, () => {
   startPublishJob();
   startAgentJob();
   startCleanupJob();
+  startKeepAlive();
 });
