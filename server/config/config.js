@@ -3,6 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+// DATA_DIR দিলে ডাটাবেস ও ছবি সেখানে থাকে (যেমন Render-এর স্থায়ী ডিস্ক বা VPS-এর আলাদা ফোল্ডার)
+const dataDir = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : null;
 
 const required = [
   "ADMIN_USERNAME",
@@ -20,6 +24,13 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET,
   tokenSecret: process.env.TOKEN_SECRET,
   fbVersion: process.env.FB_GRAPH_VERSION || "v23.0",
-  dbPath: path.join(root, "data", "app.db"),
-  mediaDir: path.join(root, "media"),
+  dbPath: dataDir
+    ? path.join(dataDir, "app.db")
+    : path.join(root, "data", "app.db"),
+  mediaDir: dataDir ? path.join(dataDir, "media") : path.join(root, "media"),
 };
+
+// ডাটাবেসে সংরক্ষিত পথে Windows-এর পুরো ঠিকানা থাকতে পারে; অন্য কম্পিউটারে সরালেও যেন কাজ করে,
+// তাই শুধু ফাইলের নামটা নিয়ে বর্তমান মিডিয়া ফোল্ডারে খোঁজা হয়
+export const mediaPath = (p) =>
+  path.join(config.mediaDir, String(p).split(/[\\/]/).pop());

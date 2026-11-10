@@ -3,6 +3,7 @@ import path from "node:path";
 import { db } from "../config/db.js";
 import { config } from "../config/config.js";
 import { audit } from "../utils/audit.js";
+import { config, mediaPath } from "../config/config.js";
 
 /**
  * পুরোনো ফাইল মোছা। কখনো মুছে না: শিডিউল করা পোস্টের ছবি।
@@ -44,7 +45,8 @@ export async function cleanup({ keepPostedDays = 3, maxPool = 300 } = {}) {
     )
     .all(cutoff);
   for (const r of posted) {
-    if (await unlink(r.local_path)) stats.postedFiles++;
+    // if (await unlink(r.local_path)) stats.postedFiles++;
+    if (await unlink(mediaPath(r.local_path))) stats.postedFiles++;
     db.prepare("UPDATE assets SET local_path = NULL WHERE id = ?").run(r.id);
   }
 
@@ -58,7 +60,7 @@ export async function cleanup({ keepPostedDays = 3, maxPool = 300 } = {}) {
     )
     .all();
   for (const r of unused.slice(maxPool)) {
-    await unlink(r.local_path);
+    await unlink(mediaPath(r.local_path));
     const referenced = db
       .prepare("SELECT 1 FROM posts WHERE asset_id = ?")
       .get(r.id);
@@ -73,7 +75,7 @@ export async function cleanup({ keepPostedDays = 3, maxPool = 300 } = {}) {
     db
       .prepare("SELECT local_path FROM assets WHERE local_path IS NOT NULL")
       .all()
-      .map((r) => path.resolve(r.local_path)),
+      .map((r) => path.resolve(mediaPath(r.local_path))),
   );
   for (const file of await fs.readdir(config.mediaDir).catch(() => [])) {
     if (file.startsWith(".")) continue;
