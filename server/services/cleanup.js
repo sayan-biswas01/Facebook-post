@@ -1,7 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { db } from "../config/db.js";
-import { config } from "../config/config.js";
 import { audit } from "../utils/audit.js";
 import { config, mediaPath } from "../config/config.js";
 
